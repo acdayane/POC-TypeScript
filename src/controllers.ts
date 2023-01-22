@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { taskSchema } from "./models.js";
-import { insertTask, updateTask, excludeTask } from "./repositories.js";
+import { Task } from "./protocols.js";
+import { insertTask, updateTask, excludeTask, getTasksList } from "./repositories.js";
 
 export async function newTask(req: Request, res: Response) {
-    const responsable:string = req.body.responsable;
-    const task:string = req.body.description;
+    const { responsable, description } = req.body as Task;
     
     const { error } = taskSchema.validate(req.body, { abortEarly: false });
 
@@ -14,20 +14,30 @@ export async function newTask(req: Request, res: Response) {
     };
 
     try {
-        await insertTask(responsable, task);
+        await insertTask(responsable, description);
         res.sendStatus(201);
     } catch(err) {
         res.status(500).send(err);
     };
 };
 
-export async function tasksList(req: Request, res: Response) {
+export async function getTasks(req: Request, res: Response) {
     const id = req.params;
 
-    let pendingTasks;
-    let sumPendings;
-  
-    res.send(`Você tem ${sumPendings} tarefas pendentes. São elas: ${pendingTasks}`)    
+    try {
+        let tasksList = await getTasksList();
+        tasksList = tasksList.rows;
+
+        const pendingTasks:Task[] = tasksList.filter(tasks => tasks.concluded === false);
+        
+        const sumPendings:number = pendingTasks.length;
+
+        const message = `Existem ${sumPendings} tarefas pendentes`;
+        
+        res.send({message: message, tasks: tasksList}); 
+    } catch(err) {
+        res.status(500).send(err);
+    };  
 };
 
 export async function updateStatusTask(req: Request, res: Response) {
