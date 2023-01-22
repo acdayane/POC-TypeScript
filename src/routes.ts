@@ -6,6 +6,6 @@ const router = Router();
 router.post("/tasks", newTask);
 router.get("/tasks", tasksList);
 router.put("/tasks/:id", updateStatusTask);
-router.delete("tasks/:id", deleteTask);
+router.delete("/tasks/:id", deleteTask);
 
 export default router;

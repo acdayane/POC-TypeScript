@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { taskSchema } from "./models.js";
-import { insertTask } from "./repositories.js";
+import { insertTask, updateTask, excludeTask } from "./repositories.js";
 
 export async function newTask(req: Request, res: Response) {
     const responsable:string = req.body.responsable;
@@ -18,7 +18,7 @@ export async function newTask(req: Request, res: Response) {
         res.sendStatus(201);
     } catch(err) {
         res.status(500).send(err);
-    }
+    };
 };
 
 export async function tasksList(req: Request, res: Response) {
@@ -31,9 +31,23 @@ export async function tasksList(req: Request, res: Response) {
 };
 
 export async function updateStatusTask(req: Request, res: Response) {
-    
+    const { id } = req.params;
+
+    try {
+        await updateTask(id);
+        res.sendStatus(200);
+    } catch(err) {
+        res.status(500).send(err);
+    };
 };
 
 export async function deleteTask(req: Request, res: Response) {
-    
+    const { id } = req.params;
+
+    try {
+        await excludeTask(id);
+        res.sendStatus(200);
+    } catch(err) {
+        res.status(500).send(err);
+    };
 };
