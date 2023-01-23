@@ -22,7 +22,6 @@ export async function newTask(req: Request, res: Response) {
 };
 
 export async function getTasks(req: Request, res: Response) {
-    const id = req.params;
 
     try {
         let tasksList = await getTasksList();

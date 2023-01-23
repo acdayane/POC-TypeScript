@@ -2,7 +2,7 @@ import { connection } from "./database.js";
 import {QueryResult} from "pg";
 import { Task } from "./protocols.js";
 
-export function insertTask(responsable: string, description: string) {
+export function insertTask(responsable: string, description: string): Promise<void> {
     return connection.query(`
         INSERT INTO tasks (responsable, description) VALUES ($1, $2);`,
         [responsable, description]
@@ -15,14 +15,14 @@ export function getTasksList(): Promise<QueryResult<Task[]>> {
     );
 };
 
-export function updateTask(id: string) {
+export function updateTask(id: string): Promise<void> {
     return connection.query(`
         UPDATE tasks SET concluded = true WHERE id = $1;`,
         [id]
     );
 };
 
-export function excludeTask(id: string) {
+export function excludeTask(id: string): Promise<void> {
     return connection.query(`
         DELETE FROM tasks WHERE id = $1`,
         [id]
